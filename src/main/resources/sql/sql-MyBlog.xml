@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bitc.mapper.MyBlogMapper">
+	<insert id="insertMember" parameterType="com.bitc.dto.MyBlogMemberDto">
+		<![CDATA[ 
+			insert into members (user_id, user_pw, user_name, user_email, user_age, user_phone)
+			values (#{userId}, #{userPw}, #{userName}, #{userEmail}, #{userAge}, #{userPhone});
+		]]>
+	</insert>
+	
+	<insert id="insertBlogVal" parameterType="com.bitc.dto.MyBlogMemberDto">
+		<![CDATA[ 
+			insert into blogvalue (user_id, blog_name)
+			select user_id, concat(user_name, ' 님의 블로그 입니다.') from members where user_id= #{userId};
+		]]>
+	</insert>
+	
+	<select id="selectMemberDto" parameterType="String" resultType="com.bitc.dto.MyBlogMemberDto">
+		<![CDATA[ 
+			select user_id, user_name, ifnull(user_email,'') as user_email, user_age, ifnull(user_phone,'') as user_phone from members
+			where user_id = #{selectId};
+		]]>
+	</select>
+	
+	<select id="selectMemberIdCnt" parameterType="String" resultType="int">
+		<![CDATA[ 
+			select count(user_id) from members
+			where user_id = #{selectId};
+		]]>
+	</select>
+	
+	<select id="getBlogValue" parameterType="String" resultType="com.bitc.dto.MyBlogValueDto">
+		<![CDATA[ 
+			select * from blogvalue
+			where user_id = #{selectId};
+		]]>
+	</select>
+	
+	<select id="loginCheck" parameterType="com.bitc.dto.MyBlogMemberDto" resultType="int">
+		<![CDATA[ 
+			select count(user_id) from members 
+			where user_id = #{userId} and user_pw = #{userPw};
+		]]>
+	</select>
+	
+	<select id="guestBoardList" resultType="com.bitc.dto.MyBlogBoardDto">
+		<![CDATA[ 
+			select idx, user_id, contents, DATE_FORMAT(created_dt, '%Y.%m.%d %H:%i:%s') AS created_dt
+			from board
+			where board_div = 'G' and board_id = #{selectId} and deleted_yn = 'N'
+			order by idx desc
+		]]>
+	</select>
+	
+	<delete id="BoardDelete" parameterType="int">
+		<![CDATA[ 
+			update board set deleted_yn = 'Y', deleted_dt = now() where idx = #{idx}
+		]]>
+	</delete>
+	
+	<insert id="guestBoardInsert" parameterType="com.bitc.dto.MyBlogBoardDto">
+		<![CDATA[ 
+			insert into board(user_id, board_id, contents, created_dt, board_div)
+			values(#{userId}, #{boardId}, #{contents}, now(), 'G')
+		]]>
+	</insert>
+	
+	<select id="findUserId" parameterType="int" resultType="String">
+		<![CDATA[ 
+			select user_id from board
+			where idx= #{idx};
+		]]>
+	</select>
+	
+	<select id="myBoardList" resultType="com.bitc.dto.MyBlogBoardDto">
+		<![CDATA[ 
+			select idx, user_id, title, contents, DATE_FORMAT(created_dt, '%Y.%m.%d %H:%i:%s') AS created_dt
+			from board
+			where board_div = 'B' and user_id = #{selectId} and deleted_yn = 'N'
+			order by idx desc
+		]]>
+	</select>
+	
+	<insert id="myboardInsert" parameterType="com.bitc.dto.MyBlogBoardDto">
+		<![CDATA[ 
+			insert into board( user_id, title, contents, created_dt, board_div)
+			values(#{userId}, #{title}, #{contents}, now(), 'B')
+		]]>	
+	</insert>
+	
+	<select id="selectBoardDetail" parameterType="HashMap" resultType="com.bitc.dto.MyBlogBoardDto">
+		<![CDATA[ 
+			select * from board where user_id = #{userId} and idx = #{idx} 
+		]]>
+	</select>
+	
+	<update id="BoardUpdate" parameterType="com.bitc.dto.MyBlogBoardDto">
+		<![CDATA[ 
+			update board set title = #{title} , contents = #{contents} where idx = #{idx} 
+		]]>
+	</update>
+	
+	<update id="profileUpdate" parameterType="com.bitc.dto.MyBlogMemberDto">
+		<![CDATA[ 
+			update members set user_name = #{userName}, user_age = #{userAge}, user_email = #{userEmail}, user_phone = #{userPhone} where user_id = #{userId} 
+		]]>
+	</update>
+	
+	<update id="passwordUpdate" parameterType="com.bitc.dto.MyBlogMemberDto">
+		<![CDATA[ 
+			update members set user_pw = #{userPw} where user_id = #{userId}
+		]]>
+	</update>
+	
+	<update id="blogValuePFUpdate" parameterType="com.bitc.dto.MyBlogValueDto">
+		<![CDATA[ 
+			update blogvalue set age_yn = #{ageYn}, phone_yn = #{phoneYn}, email_yn = #{emailYn} where user_id = #{userId}
+		]]>
+	</update>
+	
+	<update id="blogNameUpdate" parameterType="com.bitc.dto.MyBlogValueDto">
+		<![CDATA[ 
+			update blogvalue set blog_name = #{blogName} where user_id = #{userId}
+		]]>
+	</update>
+	
+	<update id="boardColorUpdate" parameterType="com.bitc.dto.MyBlogValueDto">
+		<![CDATA[ 
+			update blogvalue set board_color =  #{boardColor} where user_id = #{userId}
+		]]>
+	</update>
+	
+</mapper>

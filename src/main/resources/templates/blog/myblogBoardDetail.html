@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>MyBlog</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+	$(document).ready(function() {
+		$("#btn-editOK").hide();
+		$("#btn-cancel").hide();
+
+		$("#btn-cancel").on("click", function(){
+			location.reload();
+		});
+		
+		$("#btn-edit").on("click", function(){
+			$("#btn-editOK").show();
+			$("#btn-edit").hide();
+			$("#btn-delete").hide();
+			$("#btn-cancel").show();
+			
+			$("#head").text("게시글 수정하기");
+			
+			document.getElementById("title").readOnly = false;
+			document.getElementById("contents").readOnly = false;
+		});
+		
+		$("#btn-editOK").on("click", function(){
+			var title = $("#title").val();
+			var contents = $("#contents").val();
+			
+			if(!title){
+				alert("제목을 입력해주세요.");
+			}else if(!contents){
+				alert("내용을 입력해주세요.");
+			}else{
+				var frm = $("#frm")[0];
+				frm.action = "/board/update/";
+				frm.submit();
+			}
+		});
+		
+		
+		$("#btn-delete").on("click", function(){
+			if(confirm("삭제 하시겠습니까?"))
+			{
+				var frm = $("#frm")[0];
+				frm.action = "/board/delete";
+				frm.submit();
+			}
+		});
+	});
+</script>
+</head>
+<body>
+    <div class="container my-2">
+		<header th:include="blog/myblogheader :: header">
+		</header>
+		<div class="row">
+	        <div class="col-sm-3 pe-0">
+	        	<nav th:include="blog/navigation :: nav">
+				</nav>
+	        </div>
+			<div class="col-sm-9">
+				<div class="rounded p-2 my-2" th:style="|border:1px solid ${blogValue.boardColor};|">
+					<h1 th:text="${blogValue.blogName}"></h1>
+				</div>
+				<div class="rounded p-2 my-2 p-3" th:style="|border:1px solid ${blogValue.boardColor};|">
+			        <form id="frm" method="post">
+	                    <div>
+	                        <h3>게시판 작성</h3>
+	                    </div>
+	                    	<div class="form-floating my-2">
+	                           <input type="hidden" id="idx" name="idx" class="form-control" th:value="${boardDetail.idx}" readonly>
+							</div>
+	                    	<div class="form-floating my-2">
+	                           <input type="hidden" id="userId" name="userId" class="form-control" th:value="${boardDetail.userId}" readonly>
+							</div>
+	                       <div class="form-floating my-2">
+	                           <input type="text" id="title" name="title" class="form-control" th:value="${boardDetail.title}" readonly>
+	                           <label>제목</label>
+	                       </div>
+	                       <div class="form-floating my-2">
+	                           <textarea class="form-control" style="height: 250px" id="contents" name="contents" th:text="${boardDetail.contents}" readonly></textarea>
+								<label for="contents">내용</label>
+	                       </div>
+								<p id="result" class="text-danger text-center"></p>
+	                       	<div class="row">
+	                       		<div class="col">
+	                       			<a th:href="@{|/board/${boardDetail.userId}|}" class="btn btn-outline-primary" id="btn-list">목록</a>
+	                       		</div>
+	                       		<div class="col text-end" th:if="${session.sessionId == blogValue.userId}">
+			                        <button type="button" class="btn btn-outline-success" id="btn-editOK">확인</button>
+			                        <button type="button" class="btn btn-outline-success" id="btn-edit">수정</button>
+			                        <button type="button" class="btn btn-outline-danger" id="btn-delete">삭제</button>
+			                        <button type="button" class="btn btn-outline-danger" id="btn-cancel">취소</button>
+	                    		</div>
+	                       	</div>
+	               	</form>
+		        </div>
+			</div>
+		</div>
+    </div>
+	
+</body>
+</html>

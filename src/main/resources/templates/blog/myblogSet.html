@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>MyBlog</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+	function updatechk(){
+		 return confirm("수정 하시겠습니까?");
+	}
+
+	function passwordchk(){
+		var pw1 = $("#userPw").val();
+		var pw2 = $("#userPwchk").val();
+
+		if(pw1 == pw2)
+		{
+			return confirm("수정 하시겠습니까?");
+		} else{
+			$("#userPw").val("");
+			$("#userPwchk").val("");
+			alert("비밀번호가 일치 하지 않습니다.");
+			return false;
+		}
+	}
+</script>
+</head>
+<body>
+    <div class="container my-2">
+		<header th:include="blog/myblogheader :: header">
+		</header>
+		<div class="row">
+	        <div class="col-sm-3 pe-0">
+	        	<nav th:include="blog/navigation :: nav">
+				</nav>
+	        </div>
+			<div class="col-sm-9">
+		        <div class="rounded p-2 my-2" th:style="|border:1px solid ${blogValue.boardColor};|">
+					<h1 th:text="${blogValue.blogName}"></h1>
+				</div>
+				<div class="rounded p-2 my-2" th:style="|border:1px solid ${blogValue.boardColor};|">
+					<h1>계정 및 블로그 관리</h1>
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item">
+					    	<a class="nav-link active" data-bs-toggle="tab" href="#Profile">프로필</a>
+						</li>
+						<li class="nav-item">
+					    	<a class="nav-link" data-bs-toggle="tab" href="#passwd">비밀번호 변경</a>
+						</li>
+						<li class="nav-item">
+					    	<a class="nav-link" data-bs-toggle="tab" href="#blogname">블로그 이름</a>
+						</li>
+						<li class="nav-item">
+					    	<a class="nav-link" data-bs-toggle="tab" href="#blogColor">테두리 색상</a>
+						</li>
+					</ul>
+					
+					<div class="tab-content">
+						<div id="Profile" class="container tab-pane active"><br>
+					    	<h3>Profile</h3>
+					    	<form action="/process/profileUpdate" method="post">
+								<div class="p-3">
+									<table style="width: 100%;">
+										<colgroup>
+											<col width="10%">
+											<col width="50%">
+											<col width="40%">
+										</colgroup>
+										<!-- ID 히든 --> <input type="hidden" id="userId" name="userId" class="form-control" th:value="${memberValue.userId}" readonly> 
+										<tr>
+											<td><label>이름</label></td>
+											<td><input type="text" id="userName" name="userName" class="form-control" th:value="${memberValue.userName}"></td>
+										</tr>
+										<tr>
+											<td><label>나이</label></td>
+											<td><input type="text" id="userAge" name="userAge" class="form-control" th:value="${memberValue.userAge}"></td>
+											<td>
+												<input type="radio" id="ageYn" name="ageYn" value="Y" th:checked="${(blogValue.ageYn == 'Y')}">공개
+												<input type="radio" id="ageYn" name="ageYn" value="N" th:checked="${(blogValue.ageYn == 'N')}">비공개
+											</td>
+										</tr>
+										<tr>
+											<td><label>연락처</label></td>
+											<td><input type="text" id="userPhone" name="userPhone" class="form-control" th:value="${memberValue.userPhone}"></td>
+											<td>
+												<input type="radio" id="phoneYn" name="phoneYn" value="Y" th:checked="${(blogValue.phoneYn == 'Y')}">공개
+												<input type="radio" id="phoneYn" name="phoneYn" value="N" th:checked="${(blogValue.phoneYn == 'N')}">비공개
+											</td>
+										</tr>
+										<tr>
+											<td><label>Email</label></td>
+											<td><input type="text" id="userEmail" name="userEmail" class="form-control" th:value="${memberValue.userEmail}"></td>
+											<td>
+												<input type="radio" id="emailYn" name="emailYn" value="Y" th:checked="${(blogValue.emailYn == 'Y')}">공개
+												<input type="radio" id="emailYn" name="emailYn" value="N" th:checked="${(blogValue.emailYn == 'N')}">비공개
+											</td>
+										</tr>
+									</table>
+									<div class="text-center p-3">
+										<button type="submit" class="btn btn-outline-success" onclick="return updatechk()">변경</button>
+										<button type="reset" class="btn btn-outline-danger">취소</button>
+									</div>
+								</div>
+							</form>
+					    </div>
+					    <div id="passwd" class="container tab-pane fade"><br>
+					    	<h3>PassWord</h3>
+							<form action="/process/passwordUpdate" method="post">
+								<div class="row p-3">
+									<div class="col-6">
+										<table class="w-100">
+											<colgroup>
+												<col width="30%">
+												<col width="70%">
+											</colgroup>
+											<!-- ID 히든 --> <input type="hidden" id="userId" name="userId" class="form-control" th:value="${blogValue.userId}" readonly> 
+											<tr>
+												<td>변경할 비밀번호</td>
+												<td><input type="text" id="userPw" name="userPw" class="form-control"></td>
+											</tr>
+											<tr>
+												<td>비밀번호 확인</td>
+												<td><input type="text" id="userPwchk" name="userPwchk" class="form-control"></td>
+											</tr>
+										</table>
+										<div class="text-center p-3">
+											<button type="submit" class="btn btn-outline-success" onclick="return passwordchk()">변경</button>
+											<button type="reset" class="btn btn-outline-danger">취소</button>
+										</div>
+									</div>
+								</div>
+							</form>
+					    </div>
+					    <div id="blogname" class="container tab-pane fade"><br>
+					    	<h3>블로그 이름 수정</h3>
+					    	<form action="/process/blogName" method="post">
+								<div class="row p-3">
+									<div class="col-8">
+										<!-- ID 히든 --> <input type="hidden" id="userId" name="userId" class="form-control" th:value="${blogValue.userId}" readonly> 
+										<input type="text" id="blogName" name="blogName" class="form-control" th:value="${blogValue.blogName}">
+										<div class="text-center p-3">
+											<button type="submit" class="btn btn-outline-success">변경</button>
+											<button type="reset" class="btn btn-outline-danger">취소</button>
+										</div>
+									</div>
+								</div>
+							</form>
+					    </div>
+					    <div id="blogColor" class="container tab-pane fade"><br>
+					    	<h3>테두리 색상 선택</h3>
+					    	<form action="/process/blogColor" method="post">
+								<div class="row p-3">
+									<div class="col-8">
+										<!-- ID 히든 --> <input type="hidden" id="userId" name="userId" class="form-control" th:value="${blogValue.userId}" readonly> 
+										<table style="width: 100%;" class="text-center">
+											<colgroup>
+												<col width="10%">
+												<col width="90%">
+											</colgroup>
+											<tr>
+												<td><input type="radio" id="boardColor" name="boardColor" value="black" th:checked="${(blogValue.boardColor == 'black')}"></td>
+												<td><div class="p-5" style="width: 200px; border: 1px solid; border-radius: 5px; border-color: black;">검정</div></td>
+											</tr>
+											<tr>
+												<td><input type="radio" id="boardColor" name="boardColor" value="#f80000" th:checked="${(blogValue.boardColor == '#f80000')}"></td>
+												<td><div class="p-5" style="width: 200px; border: 1px solid; border-radius: 5px; border-color: #f80000;">빨강</div></td>
+											</tr>
+											<tr>
+												<td><input type="radio" id="boardColor" name="boardColor" value="#0000ff" th:checked="${(blogValue.boardColor == '#0000ff')}"></td>
+												<td><div class="p-5" style="width: 200px; border: 1px solid; border-radius: 5px; border-color: #0000ff;">파랑</div></td>
+											</tr>
+											<tr>
+												<td><input type="radio" id="boardColor" name="boardColor" value="#3cb371" th:checked="${(blogValue.boardColor == '#3cb371')}"></td>
+												<td><div class="p-5" style="width: 200px; border: 1px solid; border-radius: 5px; border-color: #3cb371;">초록</div></td>
+											</tr>
+											<tr>
+												<td><input type="radio" id="boardColor" name="boardColor" value="#fa12fa" th:checked="${(blogValue.boardColor == '#fa12fa')}"></td>
+												<td><div class="p-5" style="width: 200px; border: 1px solid; border-radius: 5px; border-color: #fa12fa;">분홍</div></td>
+											</tr>
+										</table>
+										<div class="text-center p-3">
+											<button type="submit" class="btn btn-outline-success">변경</button>
+											<button type="reset" class="btn btn-outline-danger">취소</button>
+										</div>
+									</div>
+								</div>
+							</form>
+					    </div>
+					</div>
+				</div>
+			</div>
+		</div>
+    </div>
+	
+</body>
+</html>

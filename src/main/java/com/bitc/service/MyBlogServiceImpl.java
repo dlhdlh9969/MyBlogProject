@@ -74,6 +74,7 @@ public class MyBlogServiceImpl implements MyBlogService {
 	@Override
 	public void myBoardInsert(MyBlogBoardDto myBlogBoardDto) throws Exception {
 		myBlogMapper.myboardInsert(myBlogBoardDto);
+		
 	}
 
 	@Override

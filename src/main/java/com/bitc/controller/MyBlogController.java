@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.bitc.dto.MyBlogBoardDto;
@@ -369,9 +370,10 @@ HttpSession session = request.getSession();
 	}
 	
 	@RequestMapping(value="board/insert") // 게시판 글등록 process
-	public String boardInsert(MyBlogBoardDto myBlogBoardDto, HttpServletRequest request) throws Exception{
-		HttpSession session = request.getSession();
+	public String boardInsert(MyBlogBoardDto myBlogBoardDto, HttpServletRequest request, MultipartHttpServletRequest multipartHttpServletRequest) throws Exception{
 		
+		
+		HttpSession session = request.getSession();
 		myBlogService.myBoardInsert(myBlogBoardDto);
 		
 		try {

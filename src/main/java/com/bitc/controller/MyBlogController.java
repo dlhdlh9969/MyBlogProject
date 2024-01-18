@@ -261,10 +261,7 @@ public class MyBlogController {
 	
 	@RequestMapping("process/blogColor") // 보더색상 변경
 	public String blogColorUpdate(MyBlogValueDto myBlogValueDto , HttpServletRequest request) throws Exception{
-HttpSession session = request.getSession();
-		
-		System.out.println(session.getAttribute("sessionId"));
-		System.out.println(myBlogValueDto.getUserId());
+		HttpSession session = request.getSession();
 		
 		try {
 			if(session.getAttribute("sessionId").equals(myBlogValueDto.getUserId()))

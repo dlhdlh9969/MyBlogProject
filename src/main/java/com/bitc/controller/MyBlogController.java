@@ -30,28 +30,22 @@ public class MyBlogController {
 	private MyBlogService myBlogService;
 	
 	@RequestMapping("/")
-	public String index() throws Exception
-	{
+	public String index() throws Exception{
 		return "blog/index";
 	}
 	
 	@RequestMapping("member/signIn") //회원가입 페이지
-	public String signIn(HttpServletRequest request) throws Exception
-	{
+	public String signIn(HttpServletRequest request) throws Exception{
 		HttpSession session = request.getSession();
 		StringBuilder stringBuilder = new StringBuilder(request.getRequestURL().toString());
 	    String requestURL = stringBuilder.toString();  //현재 URL 문자로 변환
 		
-		if(requestURL.equals(request.getHeader("Referer")))
-		{	
+		if(requestURL.equals(request.getHeader("Referer"))){	
 			return "blog/signIn";
-		}
-		else
-		{
+		}else {
 			session.setAttribute("PrevPage", request.getHeader("Referer"));
 			return "blog/signIn";
 		}
-		
 	}
 	
 	@RequestMapping("member/login") //로그인 페이지
